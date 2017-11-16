@@ -28,9 +28,25 @@ class Ecosystem {
         }
       })
     });
+
+    console.log(field);
   }
 
+  /**
+   * Get new coordinates which use for step living entities
+   */
 
+  getDirection(curCoords){
+    var directions = [
+      [0, -1],
+      [1, 0],
+      [0, 1],
+      [-1, 0]
+    ];
+    var random = Math.floor(Math.random() * directions.length);
+
+    return curCoords.map((value, i) => value + directions[random][i]);
+  }
 
 
 
@@ -38,7 +54,7 @@ class Ecosystem {
 
 var ecosystem = new Ecosystem();
 ecosystem.initGamefield(field);
-
+/*console.log(ecosystem.getDirection([2,6]));*/
 
 
 
