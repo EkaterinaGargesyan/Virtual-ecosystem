@@ -7,36 +7,36 @@ class Ecosystem {
    */
 
   initGamefield(field){
-    field.forEach(function (row, x) {
-      row.forEach(function (cell, y) {
 
-        switch(cell) {
+    field.forEach(function (row, x) {
+      row.forEach(function (cell, y, arr) {
+
+        switch(arr[y]) {
           case "#":
-            cell = new Wall();
+            arr[y] = new Wall();
             break;
           case "*":
-            cell = new Herb();
+            arr[y] = new Herb();
             break;
           case "o":
-            cell = new Herbivore(x, y);
+            arr[y] = new Herbivore(x, y);
             break;
           case "@":
-            cell = new Carnivore(x, y);
+            arr[y] = new Carnivore(x, y);
             break;
           default:
+            arr[y] = null;
             break;
         }
       })
     });
-
-    console.log(field);
   }
 
   /**
-   * Get new coordinates which use for step living entities
+   * Get new coordinates which use for the step living entities
    */
 
-  getDirection(curCoords){
+  getNewCoordinate(curCoords){
     var directions = [
       [0, -1],
       [1, 0],
@@ -48,13 +48,22 @@ class Ecosystem {
     return curCoords.map((value, i) => value + directions[random][i]);
   }
 
+  /**
+   * Look what's in the cell in the next step
+   */
 
+  lookAtCell(curCoords){
+    var x = curCoords[0];
+    var y = curCoords[1];
+
+    return field[x][y] ? field[x][y].code : field[x][y];
+  }
 
 }
 
 var ecosystem = new Ecosystem();
 ecosystem.initGamefield(field);
-/*console.log(ecosystem.getDirection([2,6]));*/
+console.log(ecosystem.lookAtCell([3,0]));
 
 
 
