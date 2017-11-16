@@ -1,42 +1,51 @@
 "use strict";
 
 class Wall {
-  code: 0;
-  amount: 20
+
+  constructor() {
+    this.code = 0;
+    this.amount = 20
+  }
 }
 
 class Herb {
-  code: 1;
-  amount: 20;
+
+  constructor() {
+    this.code = 1;
+    this.amount = 20
+  }
+
   multiply(){
 
   }
 }
 
 class LivingEntity {
-  maxEnergy: 10;
-  curEnergy: 5;
 
   constructor(x, y){
-    this.coords.x = x;
-    this.coords.y = y;
+    this._coords = [x, y];
+
+    this.maxEnergy = 10;
+    this.curEnergy = 5;
   };
 
   get energy(){
     return this.curEnergy;
   }
 
-  makeStep(){
-
+  get curCoords(){
+    return this._coords;
   }
 
-  eat(){
-
+  set curCoords(value){
+    this._coords = [value];
   }
 
-  multiply(){
+  makeStep(){ }
 
-  }
+  eat(){ }
+
+  multiply(){ }
 
   die(cell){
     if(this.curEnergy <= 0) {
@@ -46,9 +55,19 @@ class LivingEntity {
 }
 
 class Herbivore extends LivingEntity {
-  code: 2
+  constructor(x, y) {
+    super(x, y);
+    this.code = 2;
+  }
 }
 
 class Carnivore extends LivingEntity {
-  code: 3
+  constructor(x, y){
+    super(x, y);
+    this.code = 3;
+  }
 }
+
+/*
+var a = new Herbivore(1, 1);
+console.log(a.curCoords(2,2));*/
