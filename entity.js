@@ -37,11 +37,9 @@ class LivingEntity {
     return this._coords;
   }
 
-  set curCoords(value){
-    this._coords = [value];
-  }
+  makeStep(newCoords, whatIsCell){
 
-  makeStep(){ }
+  }
 
   eat(){ }
 

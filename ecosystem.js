@@ -45,25 +45,36 @@ class Ecosystem {
     ];
     var random = Math.floor(Math.random() * directions.length);
 
-    return curCoords.map((value, i) => value + directions[random][i]);
+    var newCoords = curCoords.map((value, i) => value + directions[random][i]);
+
+    if (newCoords.every((el) => el >= 0 && el < field.length)) {
+      return newCoords;
+    } else {
+      return this.getNewCoordinate(curCoords);
+    }
   }
 
   /**
    * Look what's in the cell in the next step
    */
 
-  lookAtCell(curCoords){
-    var x = curCoords[0];
-    var y = curCoords[1];
+  lookAtCell(newCoords){
+    var x = newCoords[0];
+    var y = newCoords[1];
 
     return field[x][y] ? field[x][y].code : field[x][y];
   }
+
+  
 
 }
 
 var ecosystem = new Ecosystem();
 ecosystem.initGamefield(field);
-console.log(ecosystem.lookAtCell([3,0]));
+
+var random = ecosystem.getNewCoordinate([9,9]);
+console.log(random);
+console.log(ecosystem.lookAtCell(random));
 
 
 
