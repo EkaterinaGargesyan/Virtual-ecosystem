@@ -32,6 +32,11 @@ class LivingEntity {
     this.curEnergy = 5;
   };
 
+  eat(whatIsNextCell, code){
+    if (whatIsNextCell === code) {
+      this.curEnergy++;
+    }
+  }
 
 }
 
@@ -52,7 +57,7 @@ class Carnivore extends LivingEntity {
     this.code = 3;
   }
 
-  
+
 }
 
 
