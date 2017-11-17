@@ -8,6 +8,7 @@ class Wall {
   }
 }
 
+
 class Herb {
 
   constructor() {
@@ -16,56 +17,42 @@ class Herb {
   }
 
   multiply(){
-
+    if (this.amount < 20) {
+      this.amount++;
+    }
   }
 }
+
 
 class LivingEntity {
 
   constructor(x, y){
-    this._coords = [x, y];
-
+    this.coords = [x, y];
     this.maxEnergy = 10;
     this.curEnergy = 5;
   };
 
-  get energy(){
-    return this.curEnergy;
-  }
 
-  get curCoords(){
-    return this._coords;
-  }
-
-  makeStep(newCoords, whatIsCell){
-
-  }
-
-  eat(){ }
-
-  multiply(){ }
-
-  die(cell){
-    if(this.curEnergy <= 0) {
-      cell = null;
-    }
-  }
 }
+
 
 class Herbivore extends LivingEntity {
   constructor(x, y) {
     super(x, y);
     this.code = 2;
   }
+
+
 }
+
 
 class Carnivore extends LivingEntity {
   constructor(x, y){
     super(x, y);
     this.code = 3;
   }
+
+  
 }
 
-/*
-var a = new Herbivore(1, 1);
-console.log(a.curCoords(2,2));*/
+
