@@ -61,6 +61,11 @@ class LivingEntity {
     }
   }
 
+  die(cell){
+    if(this.curEnergy === 0) {
+      cell = null;
+    }
+  }
 }
 
 
