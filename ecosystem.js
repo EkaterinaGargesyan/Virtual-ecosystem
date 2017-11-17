@@ -75,11 +75,41 @@ class Ecosystem {
     return field[x][y] ? field[x][y].code : field[x][y];
   }
 
+  /**
+   * Start the game
+   */
+
+  startTheGame(){
+
+    var livingEnities = [];
+
+    for (var x = 0; x < field.length; x++){
+      for (var y = 0; y < field[x].length; y++){
+
+        if (field[x][y]
+            && field[x][y].code >= 2
+            && livingEnities.indexOf(field[x][y]) === -1){
+
+          var curCoords = [x, y];
+          var newCoords = this.getNewCoordinates(curCoords);
+
+          field[x][y].makeStep(newCoords, this.lookAtCell(newCoords));
+          field[newCoords[0]][newCoords[1]] = field[x][y];
+          field[x][y] = null;
+
+          livingEnities.push(field[newCoords[0]][newCoords[1]]);
+
+          setTimeout(function(){}, 300);
+        }
+      }
+    }
+  }
 
 }
 
 var ecosystem = new Ecosystem();
 ecosystem.initGamefield(field);
+ecosystem.startTheGame();
 
 
 /*var a = new Herbivore(1, 1);
