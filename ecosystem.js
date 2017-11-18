@@ -33,31 +33,69 @@ class Ecosystem {
   }
 
   /**
-   * Get new coordinates which use for the step living entities
+   * Just return random value
+   */
+
+  getRandomValue(length) {
+   return Math.floor(Math.random() * length);
+  }
+
+  /**
+   * Return random direction living entity fo next step
+   */
+
+  getDirection() {
+    var directions = [
+      [-1, 0], //top
+      [0, 1],  //right
+      [1, 0],  //bottom
+      [0, -1]  //left
+    ];
+
+    return directions[this.getRandomValue(directions.length)];
+  }
+
+  /**
+   * Return true - if cell of next step is within the bounds of game field,
+   * false - if cell of next step is out of bounds of game field
+   */
+
+  isWithinTheBounds(newCoords) {
+    return newCoords.every((el) => el >= 0 && el < field.length);
+  }
+
+  /**
+   * Return true - if entity can be next step,
+   * false - if entity can't be next step (if there wall etc.)
+   */
+
+  canDoTheStep(curCoords, newCoords){
+    var curCell = field[curCoords[0]][curCoords[1]];
+    var nextCell = field[newCoords[0]][newCoords[1]];
+
+    if (curCell.code === 2 && (!nextCell || nextCell.code === 1)) {
+      return true;
+    } else if (curCell.code === 3 && (!nextCell || nextCell.code === 2)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  /**
+   * Return new coordinates for the next step living entities
    */
 
   getNewCoordinates(curCoords) {
-    var directions = [
-      [0, -1], //top
-      [1, 0],  //right
-      [0, 1],  //bottom
-      [-1, 0]  //left
-    ];
-    var random = Math.floor(Math.random() * directions.length);
+    var coordsByDirection = this.getDirection();
+    var newCoords = curCoords.map((value, i) => value + coordsByDirection[i]);
 
-    var newCoords = curCoords.map((value, i) => value + directions[random][i]);
-    var curStep = field[curCoords[0]][curCoords[1]];
-
-    var isFieldBorder = () => newCoords.every((el) => el < 0 && el > field.length);
-    if (!isFieldBorder()) {
+    //cell for the next step is out of field bound
+    if (!this.isWithinTheBounds(newCoords)) {
       newCoords = curCoords.map((value, i) => value + [1,1][i]);
     }
 
-    var nextStep = field[newCoords[0]][newCoords[1]];
-
-    if (curStep.code === 2 && nextStep === (null || 1)) {
-      return newCoords;
-    } else if (curStep.code === 3 && nextStep === (null || 2)) {
+    if (this.canDoTheStep(curCoords, newCoords)) {
       return newCoords;
     } else {
       return this.getNewCoordinates(curCoords);
@@ -65,10 +103,10 @@ class Ecosystem {
   }
 
   /**
-   * Look what's in the cell in the next step
+   * Return what's in the cell in the next step
    */
 
-  static lookAtCell(newCoords){
+  lookAtCell(newCoords){
     var x = newCoords[0];
     var y = newCoords[1];
 
@@ -80,7 +118,6 @@ class Ecosystem {
    */
 
   startTheGame(){
-
     var livingEnities = [];
 
     for (var x = 0; x < field.length; x++){
@@ -109,7 +146,7 @@ class Ecosystem {
 
 var ecosystem = new Ecosystem();
 ecosystem.initGamefield(field);
-ecosystem.startTheGame();
+console.log(ecosystem.startTheGame());
 
 
 /*var a = new Herbivore(1, 1);
