@@ -56,12 +56,26 @@ class Ecosystem {
   }
 
   /**
-   * Return true - if cell of next step is within the bounds of game field,
-   * false - if cell of next step is out of bounds of game field
+   * Return true - if cell of next step is out of bounds of game field,
+   * false - if cell of next step is within the bounds of game field
    */
 
-  isWithinTheBounds(newCoords) {
-    return newCoords.every((el) => el >= 0 && el < field.length);
+  isOutOfBounds(newCoords) {
+    return newCoords.some((el) => el < 0 || el >= field.length);
+  }
+
+  /**
+   * Return new coordinate if cell of next step is out of bounds of game field
+   */
+
+  invertInvalidCoords(newCoords) {
+    if (newCoords.some((el) => el < 0)) {
+      newCoords = newCoords.map((el) => el + 1);
+    } else {
+      newCoords = newCoords.map((el) => el - 1);
+    }
+
+    return newCoords;
   }
 
   /**
@@ -88,11 +102,11 @@ class Ecosystem {
 
   getNewCoordinates(curCoords) {
     var coordsByDirection = this.getDirection();
-    var newCoords = curCoords.map((value, i) => value + coordsByDirection[i]);
+    var newCoords = curCoords.map((el, i) => el + coordsByDirection[i]);
 
     //cell for the next step is out of field bound
-    if (!this.isWithinTheBounds(newCoords)) {
-      newCoords = curCoords.map((value, i) => value + [1,1][i]);
+    if (this.isOutOfBounds(newCoords)) {
+      newCoords = this.invertInvalidCoords(newCoords);
     }
 
     if (this.canDoTheStep(curCoords, newCoords)) {
@@ -118,40 +132,40 @@ class Ecosystem {
    */
 
   startTheGame(){
-    var livingEnities = [];
+    var whoTookTheStep = [];
 
     for (var x = 0; x < field.length; x++){
       for (var y = 0; y < field[x].length; y++){
 
         if (field[x][y]
             && field[x][y].code >= 2
-            && livingEnities.indexOf(field[x][y]) === -1){
+            && !whoTookTheStep.includes(field[x][y])){
 
-          var curCoords = [x, y];
-          var newCoords = this.getNewCoordinates(curCoords);
+          var newCoords = this.getNewCoordinates([x, y]);
 
-          field[x][y].makeStep(newCoords, this.lookAtCell(newCoords));
+          console.log(`curCoords ${[x, y]}`);
+          console.log(`newCoords ${newCoords}`);
+
+          field[x][y].takeTheStep(newCoords, this.lookAtCell(newCoords));
           field[newCoords[0]][newCoords[1]] = field[x][y];
           field[x][y] = null;
 
-          livingEnities.push(field[newCoords[0]][newCoords[1]]);
-
-          setTimeout(function(){}, 300);
+          whoTookTheStep.push(field[newCoords[0]][newCoords[1]]);
+          setTimeout(function(){}, 200);
         }
       }
     }
   }
-
 }
 
 var ecosystem = new Ecosystem();
 ecosystem.initGamefield(field);
-console.log(ecosystem.startTheGame());
+ecosystem.startTheGame();
 
 
 /*var a = new Herbivore(1, 1);
 var newCoords = ecosystem.getNewCoordinate(a.coords);
-a.makeStep(newCoords, ecosystem.lookAtCell(newCoords));*/
+a.takeTheStep(newCoords, ecosystem.lookAtCell(newCoords));*/
 
 
 

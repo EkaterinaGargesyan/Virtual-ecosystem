@@ -38,7 +38,7 @@ class LivingEntity {
     }
   }
 
-  makeStep(newCoords, whatIsCell){
+  takeTheStep(newCoords, whatIsCell){
     this.curEnergy--;
 
     if (whatIsCell === null){
@@ -83,16 +83,16 @@ class Herbivore extends LivingEntity {
     this.code = 2;
   }
 
-  makeStep(newCoords, whatIsNextCell){
-    super.makeStep(newCoords, whatIsNextCell);
+  takeTheStep(newCoords, whatIsNextCell){
+    super.takeTheStep(newCoords, whatIsNextCell);
 
     if (whatIsNextCell === 1){
-      this.eat(whatIsNextCell, 1);
+      /*this.eat(whatIsNextCell, 1);*/
       this.coords = newCoords;
     }
 
-    this.multiply(Herbivore);
-    this.die(field[this.coords[0]][this.coords[1]]);
+    /*this.multiply(Herbivore);
+    this.die(field[this.coords[0]][this.coords[1]]);*/
   }
 }
 
@@ -103,16 +103,16 @@ class Carnivore extends LivingEntity {
     this.code = 3;
   }
 
-  makeStep(newCoords, whatIsNextCell){
-    super.makeStep(newCoords, whatIsNextCell);
+  takeTheStep(newCoords, whatIsNextCell){
+    super.takeTheStep(newCoords, whatIsNextCell);
 
     if (whatIsNextCell === 2){
-      this.eat(whatIsNextCell, 2);
+      /*this.eat(whatIsNextCell, 2);*/
       this.coords = newCoords;
     }
 
-    this.multiply(Carnivore);
-    this.die(field[this.coords[0]][this.coords[1]]);
+    /*this.multiply(Carnivore);
+    this.die(field[this.coords[0]][this.coords[1]]);*/
   }
 }
 
