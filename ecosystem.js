@@ -69,11 +69,9 @@ class Ecosystem {
    */
 
   invertInvalidCoords(newCoords) {
-    if (newCoords.some((el) => el < 0)) {
-      newCoords = newCoords.map((el) => el + 1);
-    } else {
-      newCoords = newCoords.map((el) => el - 1);
-    }
+    newCoords.some((el) => el < 0)
+      ? newCoords = newCoords.map((el) => ++el)
+      : newCoords = newCoords.map((el) => --el);
 
     return newCoords;
   }
@@ -91,9 +89,7 @@ class Ecosystem {
       return true;
     } else if (curCell.code === 3 && (!nextCell || nextCell.code === 2)) {
       return true;
-    } else {
-      return false;
-    }
+    } else return false;
   }
 
   /**
@@ -121,10 +117,23 @@ class Ecosystem {
    */
 
   lookAtCell(newCoords){
-    var x = newCoords[0];
-    var y = newCoords[1];
+    return field[newCoords[0]][newCoords[1]];
+  }
 
-    return field[x][y] ? field[x][y].code : field[x][y];
+  /**
+   * Return child of parent living entity, if parent's current energy will be bigger that max energy
+   */
+
+  createChild(curCoords, newCoords){
+    var parent = field[newCoords[0]][newCoords[1]];
+
+    if (parent.code === 2){
+      field[curCoords[0]][curCoords[1]] = new Herbivore(curCoords[0], curCoords[1]);
+    } else if (parent.code === 3){
+      field[curCoords[0]][curCoords[1]] = new Carnivore(curCoords[0], curCoords[1]);
+    }
+
+    field[curCoords[0]][curCoords[1]].curEnergy = parent.curEnergy;
   }
 
   /**
@@ -142,16 +151,16 @@ class Ecosystem {
             && !whoTookTheStep.includes(field[x][y])){
 
           var newCoords = this.getNewCoordinates([x, y]);
-
-          console.log(`curCoords ${[x, y]}`);
-          console.log(`newCoords ${newCoords}`);
-
           field[x][y].takeTheStep(newCoords, this.lookAtCell(newCoords));
+
           field[newCoords[0]][newCoords[1]] = field[x][y];
           field[x][y] = null;
 
+
+
+          field[newCoords[0]][newCoords[1]].multiply(this.createChild, [x, y], newCoords);
+
           whoTookTheStep.push(field[newCoords[0]][newCoords[1]]);
-          setTimeout(function(){}, 200);
         }
       }
     }
