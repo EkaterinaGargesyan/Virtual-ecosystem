@@ -85,9 +85,11 @@ class Ecosystem {
     var curCell = field[curCoords[0]][curCoords[1]];
     var nextCell = field[newCoords[0]][newCoords[1]];
 
-    if (curCell.code === 2 && (!nextCell || nextCell.code === 1)) {
+    if (curCell.code === ENTITY_CODE.HERBIVORE
+        && (!nextCell || nextCell.code === ENTITY_CODE.HERB)) {
       return true;
-    } else if (curCell.code === 3 && (!nextCell || nextCell.code === 2)) {
+    } else if (curCell.code === ENTITY_CODE.CARNIVORE
+        && (!nextCell || nextCell.code === ENTITY_CODE.HERBIVORE)) {
       return true;
     } else return false;
   }
@@ -127,9 +129,9 @@ class Ecosystem {
   createChild(curCoords, newCoords){
     var parent = field[newCoords[0]][newCoords[1]];
 
-    if (parent.code === 2){
+    if (parent.code === ENTITY_CODE.HERBIVORE){
       field[curCoords[0]][curCoords[1]] = new Herbivore(curCoords[0], curCoords[1]);
-    } else if (parent.code === 3){
+    } else if (parent.code === ENTITY_CODE.CARNIVORE){
       field[curCoords[0]][curCoords[1]] = new Carnivore(curCoords[0], curCoords[1]);
     }
 
@@ -147,7 +149,7 @@ class Ecosystem {
       for (var y = 0; y < field[x].length; y++){
 
         if (field[x][y]
-            && field[x][y].code >= 2
+            && field[x][y].code >= ENTITY_CODE.HERBIVORE
             && !whoTookTheStep.includes(field[x][y])){
 
           var newCoords = this.getNewCoordinates([x, y]);

@@ -2,14 +2,14 @@
 
 class Wall {
   constructor() {
-    this.code = 0;
+    this.code = ENTITY_CODE.WALL;
   }
 }
 
 
 class Herb {
   constructor() {
-    this.code = 1;
+    this.code = ENTITY_CODE.HERB;
     this.amount = 20
   }
 
@@ -60,11 +60,11 @@ class LivingEntity {
 class Herbivore extends LivingEntity {
   constructor(x, y) {
     super(x, y);
-    this.code = 2;
+    this.code = ENTITY_CODE.HERBIVORE;
   }
 
   takeTheStep(newCoords, whatIsNextCell){
-    if (whatIsNextCell.code === 1){
+    if (whatIsNextCell.code === ENTITY_CODE.HERB){
       this.eat(whatIsNextCell.curEnergy);
       this.coords = newCoords;
     }
@@ -77,11 +77,11 @@ class Herbivore extends LivingEntity {
 class Carnivore extends LivingEntity {
   constructor(x, y){
     super(x, y);
-    this.code = 3;
+    this.code = ENTITY_CODE.CARNIVORE;
   }
 
   takeTheStep(newCoords, whatIsNextCell){
-    if (whatIsNextCell.code === 2){
+    if (whatIsNextCell && whatIsNextCell.code === ENTITY_CODE.HERBIVORE){
       this.eat(whatIsNextCell.curEnergy);
       this.coords = newCoords;
     }
