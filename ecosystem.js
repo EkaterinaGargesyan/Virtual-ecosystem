@@ -161,24 +161,39 @@ class Ecosystem {
   startTheGame(){
     var whoTookTheStep = [];
 
-    for (var x = 0; x < field.length; x++){
-      for (var y = 0; y < field[x].length; y++){
+    var step = (x, y) => {
+      var newCoords = this.getNewCoordinates([x, y]);
+      field[x][y].takeTheStep(newCoords, this.lookAtCell(newCoords), this.multiplyHerb);
 
-        if(field[x][y]
-            && field[x][y].code >= ENTITY_CODE.HERBIVORE
-            && !whoTookTheStep.includes(field[x][y])){
+      field[newCoords[0]][newCoords[1]] = field[x][y];
+      field[x][y] = null;
 
-          var newCoords = this.getNewCoordinates([x, y]);
-          field[x][y].takeTheStep(newCoords, this.lookAtCell(newCoords), this.multiplyHerb);
+      field[newCoords[0]][newCoords[1]].multiply(this.createChild, [x, y], newCoords);
 
-          field[newCoords[0]][newCoords[1]] = field[x][y];
-          field[x][y] = null;
+      whoTookTheStep.push(field[newCoords[0]][newCoords[1]]);
+      console.log(x,y);
+    };
 
-          field[newCoords[0]][newCoords[1]].multiply(this.createChild, [x, y], newCoords);
+    var coordX = 0;
+    var coordY = 0;
 
-          whoTookTheStep.push(field[newCoords[0]][newCoords[1]]);
+    var intervalID = setInterval(function (x, y) {
+      if(x < field.length) {
+        if(y < field[x].length) {
+
+          if(field[x][y]
+              && field[x][y].code >= ENTITY_CODE.HERBIVORE
+              && !whoTookTheStep.includes(field[x][y])){
+
+            step(x, y)
+          }
+
+          y++;
+        } else {
+          y = 0;
+          x++;
         }
-      }
-    }
+      } else clearInterval(intervalID);
+    }, 200, coordX, coordY);
   }
 }
