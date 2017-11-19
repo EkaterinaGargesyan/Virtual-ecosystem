@@ -36,7 +36,7 @@ class Ecosystem {
    * Just return random value
    */
 
-  getRandomValue(length) {
+  static getRandomValue(length) {
    return Math.floor(Math.random() * length);
   }
 
@@ -52,7 +52,7 @@ class Ecosystem {
       [0, -1]  //left
     ];
 
-    return directions[this.getRandomValue(directions.length)];
+    return directions[Ecosystem.getRandomValue(directions.length)];
   }
 
   /**
@@ -85,10 +85,10 @@ class Ecosystem {
     var curCell = field[curCoords[0]][curCoords[1]];
     var nextCell = field[newCoords[0]][newCoords[1]];
 
-    if (curCell.code === ENTITY_CODE.HERBIVORE
+    if(curCell.code === ENTITY_CODE.HERBIVORE
         && (!nextCell || nextCell.code === ENTITY_CODE.HERB)) {
       return true;
-    } else if (curCell.code === ENTITY_CODE.CARNIVORE
+    } else if(curCell.code === ENTITY_CODE.CARNIVORE
         && (!nextCell || nextCell.code === ENTITY_CODE.HERBIVORE)) {
       return true;
     } else return false;
@@ -96,6 +96,7 @@ class Ecosystem {
 
   /**
    * Return new coordinates for the next step living entities
+   * TODO: exception if there are no empty cells for the next step
    */
 
   getNewCoordinates(curCoords) {
@@ -103,11 +104,11 @@ class Ecosystem {
     var newCoords = curCoords.map((el, i) => el + coordsByDirection[i]);
 
     //cell for the next step is out of field bound
-    if (this.isOutOfBounds(newCoords)) {
+    if(this.isOutOfBounds(newCoords)) {
       newCoords = this.invertInvalidCoords(newCoords);
     }
 
-    if (this.canDoTheStep(curCoords, newCoords)) {
+    if(this.canDoTheStep(curCoords, newCoords)) {
       return newCoords;
     } else {
       return this.getNewCoordinates(curCoords);
@@ -115,27 +116,42 @@ class Ecosystem {
   }
 
   /**
-   * Return what's in the cell in the next step
+   * Return what's in the cell
    */
 
-  lookAtCell(newCoords){
-    return field[newCoords[0]][newCoords[1]];
+  lookAtCell(coords){
+    return field[coords[0]][coords[1]];
   }
 
   /**
-   * Return child of parent living entity, if parent's current energy will be bigger that max energy
+   * Create child of parent living entity, if parent's current energy will be bigger that max energy
    */
 
   createChild(curCoords, newCoords){
     var parent = field[newCoords[0]][newCoords[1]];
 
-    if (parent.code === ENTITY_CODE.HERBIVORE){
+    if(parent.code === ENTITY_CODE.HERBIVORE){
       field[curCoords[0]][curCoords[1]] = new Herbivore(curCoords[0], curCoords[1]);
-    } else if (parent.code === ENTITY_CODE.CARNIVORE){
+    } else if(parent.code === ENTITY_CODE.CARNIVORE){
       field[curCoords[0]][curCoords[1]] = new Carnivore(curCoords[0], curCoords[1]);
     }
 
     field[curCoords[0]][curCoords[1]].curEnergy = parent.curEnergy;
+  }
+
+  /**
+   * Return new instance of class Herb
+   */
+
+  multiplyHerb(){
+    var x = Ecosystem.getRandomValue(field.length);
+    var y = Ecosystem.getRandomValue(field[0].length);
+
+    if(!field[x][y]){
+      field[x][y] = new Herb();
+    } else {
+      return this.multiplyHerb();
+    }
   }
 
   /**
@@ -148,17 +164,15 @@ class Ecosystem {
     for (var x = 0; x < field.length; x++){
       for (var y = 0; y < field[x].length; y++){
 
-        if (field[x][y]
+        if(field[x][y]
             && field[x][y].code >= ENTITY_CODE.HERBIVORE
             && !whoTookTheStep.includes(field[x][y])){
 
           var newCoords = this.getNewCoordinates([x, y]);
-          field[x][y].takeTheStep(newCoords, this.lookAtCell(newCoords));
+          field[x][y].takeTheStep(newCoords, this.lookAtCell(newCoords), this.multiplyHerb);
 
           field[newCoords[0]][newCoords[1]] = field[x][y];
           field[x][y] = null;
-
-
 
           field[newCoords[0]][newCoords[1]].multiply(this.createChild, [x, y], newCoords);
 
@@ -168,18 +182,3 @@ class Ecosystem {
     }
   }
 }
-
-var ecosystem = new Ecosystem();
-ecosystem.initGamefield(field);
-ecosystem.startTheGame();
-
-
-/*var a = new Herbivore(1, 1);
-var newCoords = ecosystem.getNewCoordinate(a.coords);
-a.takeTheStep(newCoords, ecosystem.lookAtCell(newCoords));*/
-
-
-
-
-
-

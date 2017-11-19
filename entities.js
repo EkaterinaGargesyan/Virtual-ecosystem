@@ -1,25 +1,29 @@
 "use strict";
 
+/**
+ * Entity - wall
+ */
+
 class Wall {
   constructor() {
     this.code = ENTITY_CODE.WALL;
   }
 }
 
+/**
+ * Entity - herb
+ */
 
 class Herb {
   constructor() {
     this.code = ENTITY_CODE.HERB;
-    this.amount = 20
-  }
-
-  multiply(){
-    if (this.amount < 20) {
-      this.amount++;
-    }
+    this.curEnergy = 2;
   }
 }
 
+/**
+ * Entity - living entity
+ */
 
 class LivingEntity {
   constructor(x, y){
@@ -33,7 +37,7 @@ class LivingEntity {
   }
 
   multiply(createChild, curCoords, newCoords){
-    if (this.curEnergy >= this.maxEnergy) {
+    if(this.curEnergy >= this.maxEnergy){
       this.curEnergy /= 2;
 
       createChild(curCoords, newCoords);
@@ -41,13 +45,13 @@ class LivingEntity {
   }
 
   die(cell){
-    if(this.curEnergy <= 0) {
+    if(this.curEnergy <= 0){
       cell = null;
     }
   }
 
   takeTheStep(newCoords, whatIsNextCell){
-    if (!whatIsNextCell){
+    if(!whatIsNextCell){
       this.coords = newCoords;
     }
 
@@ -56,6 +60,10 @@ class LivingEntity {
   }
 }
 
+/**
+ * Entity - herbivore (child)
+ * living entity - parent
+ */
 
 class Herbivore extends LivingEntity {
   constructor(x, y) {
@@ -63,16 +71,23 @@ class Herbivore extends LivingEntity {
     this.code = ENTITY_CODE.HERBIVORE;
   }
 
-  takeTheStep(newCoords, whatIsNextCell){
-    if (whatIsNextCell.code === ENTITY_CODE.HERB){
-      this.eat(whatIsNextCell.curEnergy);
+  //TODO: rename whatIsInNextCell
+  takeTheStep(newCoords, whatIsInNextCell, multiplyHerb){
+    if(whatIsInNextCell && whatIsInNextCell.code === ENTITY_CODE.HERB){
+      this.eat(whatIsInNextCell.curEnergy);
       this.coords = newCoords;
+
+      multiplyHerb.call(ecosystem);
     }
 
-    super.takeTheStep(newCoords, whatIsNextCell);
+    super.takeTheStep(newCoords, whatIsInNextCell);
   }
 }
 
+/**
+ * Entity - carnivore (child)
+ * living entity - parent
+ */
 
 class Carnivore extends LivingEntity {
   constructor(x, y){
@@ -80,13 +95,14 @@ class Carnivore extends LivingEntity {
     this.code = ENTITY_CODE.CARNIVORE;
   }
 
-  takeTheStep(newCoords, whatIsNextCell){
-    if (whatIsNextCell && whatIsNextCell.code === ENTITY_CODE.HERBIVORE){
-      this.eat(whatIsNextCell.curEnergy);
+  //TODO: rename whatIsInNextCell
+  takeTheStep(newCoords, whatIsInNextCell){
+    if (whatIsInNextCell && whatIsInNextCell.code === ENTITY_CODE.HERBIVORE){
+      this.eat(whatIsInNextCell.curEnergy);
       this.coords = newCoords;
     }
 
-    super.takeTheStep(newCoords, whatIsNextCell);
+    super.takeTheStep(newCoords, whatIsInNextCell);
   }
 }
 
