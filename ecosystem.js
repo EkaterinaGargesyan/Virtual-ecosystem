@@ -69,9 +69,11 @@ class Ecosystem {
    */
 
   static invertInvalidCoords(newCoords) {
-    newCoords.some((el) => el < 0)
-      ? newCoords = newCoords.map((el) => ++el)
-      : newCoords = newCoords.map((el) => --el);
+    if(newCoords.some(() => newCoords[0] < 0 || newCoords[1] > field.length-1)){
+      newCoords = newCoords.map((el, i) => el + [1,-1][i]);
+    } else if(newCoords.some(() => newCoords[1] < 0 || newCoords[0] > field.length-1)){
+      newCoords = newCoords.map((el, i) => el + [-1,1][i]);
+    }
 
     return newCoords;
   }
@@ -127,7 +129,7 @@ class Ecosystem {
    * Create child of parent living entity, if parent's current energy will be bigger that max energy
    */
 
-  createChild(curCoords, newCoords){
+  static createChild(curCoords, newCoords){
     var parent = field[newCoords[0]][newCoords[1]];
 
     if(parent.code === ENTITY_CODE.HERBIVORE){
@@ -165,10 +167,10 @@ class Ecosystem {
     field[newCoords[0]][newCoords[1]] = field[x][y];
     field[x][y] = null;
 
-    field[newCoords[0]][newCoords[1]].multiply(this.createChild, [x, y], newCoords);
+    field[newCoords[0]][newCoords[1]].multiply([x, y], newCoords);
 
     arrTookStep.push(field[newCoords[0]][newCoords[1]]);
-    console.log(x, y);
+    console.log(field[newCoords[0]][newCoords[1]]);
   };
 
   /**
@@ -176,13 +178,13 @@ class Ecosystem {
    * Passes through all living entities of the game field
    */
 
-  startTheGame(){
+  gameRound(){
     var whoTookTheStep = [];
 
     var x = 0,
         y = 0;
 
-    (function gameRound() {
+    (function process() {
       if(x < field.length){
         if(y < field[x].length){
 
@@ -194,16 +196,16 @@ class Ecosystem {
             setTimeout(function () {
               Ecosystem.step(x, y, whoTookTheStep);
               y += 1;
-              gameRound();
-            }, 200, x, y, whoTookTheStep);
+              process();
+            }, 300, x, y, whoTookTheStep);
           } else {
             y += 1;
-            gameRound();
+            process();
           }
         } else {
           x +=1;
           y = 0;
-          gameRound();
+          process();
         }
       }
     })()
