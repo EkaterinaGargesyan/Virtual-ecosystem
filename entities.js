@@ -77,7 +77,7 @@ class Herbivore extends LivingEntity {
       this.eat(whatIsInNextCell.curEnergy);
       this.coords = newCoords;
 
-      multiplyHerb.call(ecosystem);
+      Ecosystem.multiplyHerb();
     }
 
     super.takeTheStep(newCoords, whatIsInNextCell);

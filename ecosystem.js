@@ -44,7 +44,7 @@ class Ecosystem {
    * Return random direction living entity fo next step
    */
 
-  getDirection() {
+  static getDirection() {
     var directions = [
       [-1, 0], //top
       [0, 1],  //right
@@ -60,7 +60,7 @@ class Ecosystem {
    * false - if cell of next step is within the bounds of game field
    */
 
-  isOutOfBounds(newCoords) {
+  static isOutOfBounds(newCoords) {
     return newCoords.some((el) => el < 0 || el >= field.length);
   }
 
@@ -68,7 +68,7 @@ class Ecosystem {
    * Return new coordinate if cell of next step is out of bounds of game field
    */
 
-  invertInvalidCoords(newCoords) {
+  static invertInvalidCoords(newCoords) {
     newCoords.some((el) => el < 0)
       ? newCoords = newCoords.map((el) => ++el)
       : newCoords = newCoords.map((el) => --el);
@@ -81,7 +81,7 @@ class Ecosystem {
    * false - if entity can't be next step (if there wall etc.)
    */
 
-  canDoTheStep(curCoords, newCoords){
+  static canDoTheStep(curCoords, newCoords){
     var curCell = field[curCoords[0]][curCoords[1]];
     var nextCell = field[newCoords[0]][newCoords[1]];
 
@@ -99,16 +99,16 @@ class Ecosystem {
    * TODO: exception if there are no empty cells for the next step
    */
 
-  getNewCoordinates(curCoords) {
-    var coordsByDirection = this.getDirection();
+  static getNewCoordinates(curCoords) {
+    var coordsByDirection = Ecosystem.getDirection();
     var newCoords = curCoords.map((el, i) => el + coordsByDirection[i]);
 
     //cell for the next step is out of field bound
-    if(this.isOutOfBounds(newCoords)) {
-      newCoords = this.invertInvalidCoords(newCoords);
+    if(Ecosystem.isOutOfBounds(newCoords)) {
+      newCoords = Ecosystem.invertInvalidCoords(newCoords);
     }
 
-    if(this.canDoTheStep(curCoords, newCoords)) {
+    if(Ecosystem.canDoTheStep(curCoords, newCoords)) {
       return newCoords;
     } else {
       return this.getNewCoordinates(curCoords);
@@ -119,7 +119,7 @@ class Ecosystem {
    * Return what's in the cell
    */
 
-  lookAtCell(coords){
+  static lookAtCell(coords){
     return field[coords[0]][coords[1]];
   }
 
@@ -143,7 +143,7 @@ class Ecosystem {
    * Return new instance of class Herb
    */
 
-  multiplyHerb(){
+  static multiplyHerb(){
     var x = Ecosystem.getRandomValue(field.length);
     var y = Ecosystem.getRandomValue(field[0].length);
 
@@ -155,45 +155,57 @@ class Ecosystem {
   }
 
   /**
+   * TODO: rename step
+   */
+
+  static step(x, y, arrTookStep){
+    var newCoords = Ecosystem.getNewCoordinates([x, y]);
+    field[x][y].takeTheStep(newCoords, Ecosystem.lookAtCell(newCoords), this.multiplyHerb);
+
+    field[newCoords[0]][newCoords[1]] = field[x][y];
+    field[x][y] = null;
+
+    field[newCoords[0]][newCoords[1]].multiply(this.createChild, [x, y], newCoords);
+
+    arrTookStep.push(field[newCoords[0]][newCoords[1]]);
+    console.log(x, y);
+  };
+
+  /**
    * Start the game
+   * Passes through all living entities of the game field
    */
 
   startTheGame(){
     var whoTookTheStep = [];
 
-    var step = (x, y) => {
-      var newCoords = this.getNewCoordinates([x, y]);
-      field[x][y].takeTheStep(newCoords, this.lookAtCell(newCoords), this.multiplyHerb);
+    var x = 0,
+        y = 0;
 
-      field[newCoords[0]][newCoords[1]] = field[x][y];
-      field[x][y] = null;
+    (function gameRound() {
+      if(x < field.length){
+        if(y < field[x].length){
 
-      field[newCoords[0]][newCoords[1]].multiply(this.createChild, [x, y], newCoords);
-
-      whoTookTheStep.push(field[newCoords[0]][newCoords[1]]);
-      console.log(x,y);
-    };
-
-    var coordX = 0;
-    var coordY = 0;
-
-    var intervalID = setInterval(function (x, y) {
-      if(x < field.length) {
-        if(y < field[x].length) {
-
+          //Check - whether the game field element is an living entity and and did he make the step earlier
           if(field[x][y]
               && field[x][y].code >= ENTITY_CODE.HERBIVORE
-              && !whoTookTheStep.includes(field[x][y])){
+              && !whoTookTheStep.includes(field[x][y])) {
 
-            step(x, y)
+            setTimeout(function () {
+              Ecosystem.step(x, y, whoTookTheStep);
+              y += 1;
+              gameRound();
+            }, 200, x, y, whoTookTheStep);
+          } else {
+            y += 1;
+            gameRound();
           }
-
-          y++;
         } else {
+          x +=1;
           y = 0;
-          x++;
+          gameRound();
         }
-      } else clearInterval(intervalID);
-    }, 200, coordX, coordY);
+      }
+    })()
   }
 }

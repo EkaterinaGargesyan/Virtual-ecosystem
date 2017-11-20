@@ -31,4 +31,4 @@ e2e/*.map
 .DS_Store
 
 # Test file
-test.js
+test.html
