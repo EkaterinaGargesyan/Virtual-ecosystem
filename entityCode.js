@@ -6,3 +6,10 @@ const ENTITY_CODE = {
   HERBIVORE: 2,
   CARNIVORE: 3
 };
+
+const TOTAL_IN_FIELD = {
+  WALL: 15,
+  HERB: 15,
+  HERBIVORE: 10,
+  CARNIVORE: 10
+};

@@ -7,7 +7,6 @@ class Ecosystem {
    */
 
   initGamefield(field){
-
     field.forEach(function (row, x) {
       row.forEach(function (cell, y, arr) {
 
@@ -56,35 +55,13 @@ class Ecosystem {
   }
 
   /**
-   * Return true - if cell of next step is out of bounds of game field,
-   * false - if cell of next step is within the bounds of game field
-   */
-
-  static isOutOfBounds(newCoords) {
-    return newCoords.some((el) => el < 0 || el >= field.length);
-  }
-
-  /**
-   * Return new coordinate if cell of next step is out of bounds of game field
-   */
-
-  static invertInvalidCoords(newCoords) {
-    if(newCoords.some(() => newCoords[0] < 0 || newCoords[1] > field.length-1)){
-      newCoords = newCoords.map((el, i) => el + [1,-1][i]);
-    } else if(newCoords.some(() => newCoords[1] < 0 || newCoords[0] > field.length-1)){
-      newCoords = newCoords.map((el, i) => el + [-1,1][i]);
-    }
-
-    return newCoords;
-  }
-
-  /**
    * Return true - if entity can be next step,
    * false - if entity can't be next step (if there wall etc.)
    */
 
   static canDoTheStep(curCoords, newCoords){
     var curCell = field[curCoords[0]][curCoords[1]];
+    console.log(`newCoords ${newCoords}`);
     var nextCell = field[newCoords[0]][newCoords[1]];
 
     if(curCell.code === ENTITY_CODE.HERBIVORE
@@ -103,12 +80,20 @@ class Ecosystem {
 
   static getNewCoordinates(curCoords) {
     var coordsByDirection = Ecosystem.getDirection();
-    var newCoords = curCoords.map((el, i) => el + coordsByDirection[i]);
+    var newCoords = curCoords.map((el, i) => {
 
-    //cell for the next step is out of field bound
-    if(Ecosystem.isOutOfBounds(newCoords)) {
-      newCoords = Ecosystem.invertInvalidCoords(newCoords);
-    }
+      //If element is near of field bound and new coordinates will be out of field bound, then invert new coordinates
+      //If element isn't near of field bound, return new coordinate, that depend on direction (coordsByDirection)
+      if(el === 0){
+        el = (coordsByDirection[i] < 0) ? (el - coordsByDirection[i]) : (el + coordsByDirection[i]);
+      } else if(el >= field.length-1){
+        el = (coordsByDirection[i] > 0) ? (el - coordsByDirection[i]) : (el + coordsByDirection[i]);
+      } else {
+        el += coordsByDirection[i];
+      }
+
+      return el;
+    });
 
     if(Ecosystem.canDoTheStep(curCoords, newCoords)) {
       return newCoords;

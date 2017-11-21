@@ -32,7 +32,7 @@ class LivingEntity {
 
   eat(victimEnergy){
     this.curEnergy += victimEnergy;
-    console.log("eat");
+    //console.log("eat");
   }
 
   multiply(curCoords, newCoords){
@@ -40,14 +40,14 @@ class LivingEntity {
       this.curEnergy /= 2;
 
       Ecosystem.createChild(curCoords, newCoords);
-      console.log("multiply");
+      //console.log("multiply");
     }
   }
 
   die(cell){
     if(this.curEnergy <= 0){
       cell = null;
-      console.log("die");
+      //console.log("die");
     }
   }
 
