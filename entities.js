@@ -7,6 +7,7 @@
 class Wall {
   constructor() {
     this.code = ENTITY_CODE.WALL;
+    this.symbol = SYMBOL_ON_FIELD.WALL;
   }
 }
 
@@ -17,6 +18,7 @@ class Wall {
 class Herb {
   constructor() {
     this.code = ENTITY_CODE.HERB;
+    this.symbol = SYMBOL_ON_FIELD.HERB;
     this.curEnergy = 2;
   }
 }
@@ -32,6 +34,7 @@ class LivingEntity {
 
   eat(victimEnergy){
     this.curEnergy += victimEnergy;
+    console.log("eat");
   }
 
   multiply(curCoords, newCoords){
@@ -39,6 +42,7 @@ class LivingEntity {
       this.curEnergy /= 2;
 
       Ecosystem.createChild(curCoords, newCoords);
+      console.log("multiply");
     }
   }
 
@@ -46,6 +50,7 @@ class LivingEntity {
     if(this.curEnergy <= 0){
       Ecosystem.removeEntity(this.coords);
       this.coords = null;
+      console.log("die");
     }
   }
 
@@ -67,13 +72,13 @@ class Herbivore extends LivingEntity {
   constructor(x, y) {
     super(x, y);
     this.code = ENTITY_CODE.HERBIVORE;
-
-    this.maxEnergy = 8;
-    this.curEnergy = 4;
+    this.symbol = SYMBOL_ON_FIELD.HERBIVORE;
+    this.maxEnergy = 10;
+    this.curEnergy = 7;
   }
 
   //TODO: rename whatIsInNextCell
-  takeTheStep(newCoords, whatIsInNextCell, multiplyHerb){
+  takeTheStep(newCoords, whatIsInNextCell){
     if(whatIsInNextCell && whatIsInNextCell.code === ENTITY_CODE.HERB){
       this.eat(whatIsInNextCell.curEnergy);
       this.coords = newCoords;
@@ -94,9 +99,9 @@ class Carnivore extends LivingEntity {
   constructor(x, y){
     super(x, y);
     this.code = ENTITY_CODE.CARNIVORE;
-
-    this.maxEnergy = 10;
-    this.curEnergy = 5;
+    this.symbol = SYMBOL_ON_FIELD.CARNIVORE;
+    this.maxEnergy = 15;
+    this.curEnergy = 10;
   }
 
   //TODO: rename whatIsInNextCell

@@ -7,12 +7,14 @@
 <style>
   table {
     margin: 50px;
+    border: 1px solid black;
   }
 
   td {
     width: 50px;
     height: 50px;
-    border: 1px solid black;
+    text-align: center;
+    font-size: 30px;
   }
 </style>
 
@@ -141,7 +143,7 @@
 </table>
 
 <script src="field.js"></script>
-<script src="entityCode.js"></script>
+<script src="entityConsts.js"></script>
 <script src="entities.js"></script>
 <script src="ecosystem.js"></script>
 <script src="renderer.js"></script>
@@ -151,8 +153,7 @@
   ecosystem.initGamefield(field);
   //ecosystem.gameRound();
 
-  setInterval(function(){ecosystem.gameRound(); console.log(field)}, 2000);
-
+  setInterval(function(){ecosystem.gameRound();}, 2000);
 
 </script>
 </body>

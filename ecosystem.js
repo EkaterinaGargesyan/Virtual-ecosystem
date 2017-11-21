@@ -29,6 +29,8 @@ class Ecosystem {
         }
       })
     });
+
+    Renderer.fillInField();
   }
 
   /**
@@ -61,15 +63,14 @@ class Ecosystem {
 
   static canDoTheStep(curCoords, newCoords){
     var curCell = field[curCoords[0]][curCoords[1]];
-    console.log(`newCoords ${newCoords}`);
     var nextCell = field[newCoords[0]][newCoords[1]];
 
-    console.log(`curCell ${field[curCoords[0]][curCoords[1]]}`);
+    //console.log(curCell);
     if(curCell.code === ENTITY_CODE.HERBIVORE
-        && (!nextCell || nextCell.code === ENTITY_CODE.HERB)) {
+        && (!nextCell || nextCell.code === ENTITY_CODE.HERB)){
       return true;
     } else if(curCell.code === ENTITY_CODE.CARNIVORE
-        && (!nextCell || nextCell.code === ENTITY_CODE.HERBIVORE)) {
+        && (!nextCell || nextCell.code === (ENTITY_CODE.HERB || ENTITY_CODE.HERBIVORE))){
       return true;
     } else return false;
   }
@@ -125,6 +126,7 @@ class Ecosystem {
     }
 
     field[curCoords[0]][curCoords[1]].curEnergy = parent.curEnergy;
+    Renderer.updateTable(curCoords[0], curCoords[1], newCoords);
   }
 
   /**
@@ -145,8 +147,9 @@ class Ecosystem {
 
     if(!field[x][y]){
       field[x][y] = new Herb();
+      Renderer.updateTable(0, 0, [x, y]);
     } else {
-      return this.multiplyHerb();
+      return Ecosystem.multiplyHerb();
     }
   }
 
@@ -156,7 +159,7 @@ class Ecosystem {
 
   static step(x, y, arrTookStep){
     var newCoords = Ecosystem.getNewCoordinates([x, y]);
-    field[x][y].takeTheStep(newCoords, Ecosystem.lookAtCell(newCoords), Ecosystem.multiplyHerb);
+    field[x][y].takeTheStep(newCoords, Ecosystem.lookAtCell(newCoords));
 
     field[newCoords[0]][newCoords[1]] = field[x][y];
     field[x][y] = null;
@@ -165,7 +168,7 @@ class Ecosystem {
     field[newCoords[0]][newCoords[1]].die();
 
     arrTookStep.push(field[newCoords[0]][newCoords[1]]);
-    console.log(field[newCoords[0]][newCoords[1]]);
+    Renderer.updateTable(x, y, newCoords);
   };
 
   /**
@@ -186,13 +189,13 @@ class Ecosystem {
           //Check - whether the game field element is an living entity and and did he make the step earlier
           if(field[x][y]
               && field[x][y].code >= ENTITY_CODE.HERBIVORE
-              && !whoTookTheStep.includes(field[x][y])) {
+              && whoTookTheStep.indexOf(field[x][y]) === -1){
 
             setTimeout(function () {
               Ecosystem.step(x, y, whoTookTheStep);
               y += 1;
               process();
-            }, 500, x, y, whoTookTheStep);
+            }, 100, x, y, whoTookTheStep);
           } else {
             y += 1;
             process();
