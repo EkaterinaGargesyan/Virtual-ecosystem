@@ -64,6 +64,7 @@ class Ecosystem {
     console.log(`newCoords ${newCoords}`);
     var nextCell = field[newCoords[0]][newCoords[1]];
 
+    console.log(`curCell ${field[curCoords[0]][curCoords[1]]}`);
     if(curCell.code === ENTITY_CODE.HERBIVORE
         && (!nextCell || nextCell.code === ENTITY_CODE.HERB)) {
       return true;
@@ -127,6 +128,14 @@ class Ecosystem {
   }
 
   /**
+   * Remove element of game field, if its energy is smaller or equals 0
+   */
+
+  static removeEntity(coords){
+    field[coords[0]][coords[1]] = null;
+  }
+
+  /**
    * Return new instance of class Herb
    */
 
@@ -147,12 +156,13 @@ class Ecosystem {
 
   static step(x, y, arrTookStep){
     var newCoords = Ecosystem.getNewCoordinates([x, y]);
-    field[x][y].takeTheStep(newCoords, Ecosystem.lookAtCell(newCoords), this.multiplyHerb);
+    field[x][y].takeTheStep(newCoords, Ecosystem.lookAtCell(newCoords), Ecosystem.multiplyHerb);
 
     field[newCoords[0]][newCoords[1]] = field[x][y];
     field[x][y] = null;
 
     field[newCoords[0]][newCoords[1]].multiply([x, y], newCoords);
+    field[newCoords[0]][newCoords[1]].die();
 
     arrTookStep.push(field[newCoords[0]][newCoords[1]]);
     console.log(field[newCoords[0]][newCoords[1]]);
@@ -182,7 +192,7 @@ class Ecosystem {
               Ecosystem.step(x, y, whoTookTheStep);
               y += 1;
               process();
-            }, 300, x, y, whoTookTheStep);
+            }, 500, x, y, whoTookTheStep);
           } else {
             y += 1;
             process();
