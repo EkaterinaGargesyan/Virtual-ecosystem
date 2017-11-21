@@ -19,7 +19,7 @@ class Herb {
   constructor() {
     this.code = ENTITY_CODE.HERB;
     this.symbol = SYMBOL_ON_FIELD.HERB;
-    this.curEnergy = 2;
+    this.curEnergy = 3;
   }
 }
 
@@ -34,14 +34,13 @@ class LivingEntity {
 
   eat(victimEnergy){
     this.curEnergy += victimEnergy;
-    console.log("eat");
   }
 
-  multiply(curCoords, newCoords){
+  multiply(x, y, newCoords){
     if(this.curEnergy >= this.maxEnergy){
       this.curEnergy /= 2;
 
-      Ecosystem.createChild(curCoords, newCoords);
+      Ecosystem.createChild(x, y, newCoords);
       console.log("multiply");
     }
   }
@@ -50,7 +49,6 @@ class LivingEntity {
     if(this.curEnergy <= 0){
       Ecosystem.removeEntity(this.coords);
       this.coords = null;
-      console.log("die");
     }
   }
 
@@ -73,8 +71,8 @@ class Herbivore extends LivingEntity {
     super(x, y);
     this.code = ENTITY_CODE.HERBIVORE;
     this.symbol = SYMBOL_ON_FIELD.HERBIVORE;
-    this.maxEnergy = 10;
-    this.curEnergy = 7;
+    this.maxEnergy = 8;
+    this.curEnergy = 6;
   }
 
   //TODO: rename whatIsInNextCell
@@ -100,8 +98,8 @@ class Carnivore extends LivingEntity {
     super(x, y);
     this.code = ENTITY_CODE.CARNIVORE;
     this.symbol = SYMBOL_ON_FIELD.CARNIVORE;
-    this.maxEnergy = 15;
-    this.curEnergy = 10;
+    this.maxEnergy = 10;
+    this.curEnergy = 8;
   }
 
   //TODO: rename whatIsInNextCell

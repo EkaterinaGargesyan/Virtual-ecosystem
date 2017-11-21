@@ -153,7 +153,12 @@
   ecosystem.initGamefield(field);
   //ecosystem.gameRound();
 
-  setInterval(function(){ecosystem.gameRound();}, 2000);
+  var intervalID = setInterval(() => {
+    ecosystem.gameRound();
+    if(Ecosystem.intervalTimer() === 0){
+      clearInterval(intervalID);
+    }
+  }, Ecosystem.intervalTimer());
 
 </script>
 </body>

@@ -116,17 +116,17 @@ class Ecosystem {
    * Create child of parent living entity, if parent's current energy will be bigger that max energy
    */
 
-  static createChild(curCoords, newCoords){
+  static createChild(x, y, newCoords){
     var parent = field[newCoords[0]][newCoords[1]];
 
     if(parent.code === ENTITY_CODE.HERBIVORE){
-      field[curCoords[0]][curCoords[1]] = new Herbivore(curCoords[0], curCoords[1]);
+      field[x][y] = new Herbivore(x, y);
     } else if(parent.code === ENTITY_CODE.CARNIVORE){
-      field[curCoords[0]][curCoords[1]] = new Carnivore(curCoords[0], curCoords[1]);
+      field[x][y] = new Carnivore(x, y);
     }
 
-    field[curCoords[0]][curCoords[1]].curEnergy = parent.curEnergy;
-    Renderer.updateTable(curCoords[0], curCoords[1], newCoords);
+    field[x][y].curEnergy = parent.curEnergy;
+    Renderer.updateTable(x, y, newCoords);
   }
 
   /**
@@ -164,12 +164,30 @@ class Ecosystem {
     field[newCoords[0]][newCoords[1]] = field[x][y];
     field[x][y] = null;
 
-    field[newCoords[0]][newCoords[1]].multiply([x, y], newCoords);
+    field[newCoords[0]][newCoords[1]].multiply(x, y, newCoords);
     field[newCoords[0]][newCoords[1]].die();
 
     arrTookStep.push(field[newCoords[0]][newCoords[1]]);
     Renderer.updateTable(x, y, newCoords);
   };
+
+  /**
+   * Return time of passage of the game round
+   */
+
+  static intervalTimer(){
+    var count = 0;
+
+    field.forEach(function (row) {
+      row.forEach(function (cell) {
+        if(cell && cell.code >= ENTITY_CODE.HERBIVORE) {
+          count++;
+        }
+      })
+    });
+
+    return count * 100;
+  }
 
   /**
    * Start the game
@@ -206,6 +224,8 @@ class Ecosystem {
           process();
         }
       }
-    })()
+    })();
+
+    console.log(Ecosystem.intervalTimer());
   }
 }
