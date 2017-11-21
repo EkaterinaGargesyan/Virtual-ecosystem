@@ -39,9 +39,7 @@ class LivingEntity {
   multiply(x, y, newCoords){
     if(this.curEnergy >= this.maxEnergy){
       this.curEnergy /= 2;
-
       Ecosystem.createChild(x, y, newCoords);
-      console.log("multiply");
     }
   }
 
@@ -75,16 +73,15 @@ class Herbivore extends LivingEntity {
     this.curEnergy = 6;
   }
 
-  //TODO: rename whatIsInNextCell
-  takeTheStep(newCoords, whatIsInNextCell){
-    if(whatIsInNextCell && whatIsInNextCell.code === ENTITY_CODE.HERB){
-      this.eat(whatIsInNextCell.curEnergy);
+  takeTheStep(newCoords, nextCellContent){
+    if(nextCellContent && nextCellContent.code === ENTITY_CODE.HERB){
+      this.eat(nextCellContent.curEnergy);
       this.coords = newCoords;
 
       Ecosystem.multiplyHerb();
     }
 
-    super.takeTheStep(newCoords, whatIsInNextCell);
+    super.takeTheStep(newCoords, nextCellContent);
   }
 }
 
@@ -102,15 +99,12 @@ class Carnivore extends LivingEntity {
     this.curEnergy = 8;
   }
 
-  //TODO: rename whatIsInNextCell
-  takeTheStep(newCoords, whatIsInNextCell){
-    if (whatIsInNextCell && whatIsInNextCell.code === ENTITY_CODE.HERBIVORE){
-      this.eat(whatIsInNextCell.curEnergy);
+  takeTheStep(newCoords, nextCellContent){
+    if (nextCellContent && nextCellContent.code === ENTITY_CODE.HERBIVORE){
+      this.eat(nextCellContent.curEnergy);
       this.coords = newCoords;
     }
 
-    super.takeTheStep(newCoords, whatIsInNextCell);
+    super.takeTheStep(newCoords, nextCellContent);
   }
 }
-
-

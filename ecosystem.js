@@ -42,7 +42,7 @@ class Ecosystem {
   }
 
   /**
-   * Return random direction living entity fo next step
+   * Return random coordinates by direction for the next step of entity
    */
 
   static getDirection() {
@@ -57,18 +57,20 @@ class Ecosystem {
   }
 
   /**
-   * Return true - if entity can be next step,
-   * false - if entity can't be next step (if there wall etc.)
+   * Return true - if entity can take the next step,
+   * false - if entity can't take the next step (if there wall etc.)
    */
 
   static canDoTheStep(curCoords, newCoords){
     var curCell = field[curCoords[0]][curCoords[1]];
     var nextCell = field[newCoords[0]][newCoords[1]];
 
-    //console.log(curCell);
+    //if Herbivore is in current cell and next cell is empty or there is herb
     if(curCell.code === ENTITY_CODE.HERBIVORE
         && (!nextCell || nextCell.code === ENTITY_CODE.HERB)){
       return true;
+
+      //if Carnivore is in current cell and next cell is empty or there is Herbivore
     } else if(curCell.code === ENTITY_CODE.CARNIVORE
         && (!nextCell || nextCell.code === (ENTITY_CODE.HERB || ENTITY_CODE.HERBIVORE))){
       return true;
@@ -76,22 +78,21 @@ class Ecosystem {
   }
 
   /**
-   * Return new coordinates for the next step living entities
-   * TODO: exception if there are no empty cells for the next step
+   * Return new coordinates for the next step of entity
    */
 
   static getNewCoordinates(curCoords) {
-    var coordsByDirection = Ecosystem.getDirection();
+    var coordsByDir = Ecosystem.getDirection();
     var newCoords = curCoords.map((el, i) => {
 
       //If element is near of field bound and new coordinates will be out of field bound, then invert new coordinates
       //If element isn't near of field bound, return new coordinate, that depend on direction (coordsByDirection)
       if(el === 0){
-        el = (coordsByDirection[i] < 0) ? (el - coordsByDirection[i]) : (el + coordsByDirection[i]);
+        el = (coordsByDir[i] < 0) ? (el - coordsByDir[i]) : (el + coordsByDir[i]);
       } else if(el >= field.length-1){
-        el = (coordsByDirection[i] > 0) ? (el - coordsByDirection[i]) : (el + coordsByDirection[i]);
+        el = (coordsByDir[i] > 0) ? (el - coordsByDir[i]) : (el + coordsByDir[i]);
       } else {
-        el += coordsByDirection[i];
+        el += coordsByDir[i];
       }
 
       return el;
@@ -105,7 +106,7 @@ class Ecosystem {
   }
 
   /**
-   * Return what's in the cell
+   * Return cell content by coordinates
    */
 
   static lookAtCell(coords){
@@ -113,7 +114,7 @@ class Ecosystem {
   }
 
   /**
-   * Create child of parent living entity, if parent's current energy will be bigger that max energy
+   * Create child of parent entity, if parent's current energy will be bigger that max energy
    */
 
   static createChild(x, y, newCoords){
@@ -138,7 +139,7 @@ class Ecosystem {
   }
 
   /**
-   * Return new instance of class Herb
+   * Append new instance of class Herb on the game field
    */
 
   static multiplyHerb(){
@@ -154,7 +155,7 @@ class Ecosystem {
   }
 
   /**
-   * TODO: rename step
+   * Entity step on game field
    */
 
   static step(x, y, arrTookStep){
@@ -186,7 +187,7 @@ class Ecosystem {
       })
     });
 
-    return count * 100;
+    return count * 150;
   }
 
   /**
@@ -204,7 +205,7 @@ class Ecosystem {
       if(x < field.length){
         if(y < field[x].length){
 
-          //Check - whether the game field element is an living entity and and did he make the step earlier
+          //Check - if in cell is living entity and it didn't make the step earlier
           if(field[x][y]
               && field[x][y].code >= ENTITY_CODE.HERBIVORE
               && whoTookTheStep.indexOf(field[x][y]) === -1){
@@ -213,7 +214,7 @@ class Ecosystem {
               Ecosystem.step(x, y, whoTookTheStep);
               y += 1;
               process();
-            }, 100, x, y, whoTookTheStep);
+            }, 150, x, y, whoTookTheStep);
           } else {
             y += 1;
             process();
@@ -225,7 +226,5 @@ class Ecosystem {
         }
       }
     })();
-
-    console.log(Ecosystem.intervalTimer());
   }
 }

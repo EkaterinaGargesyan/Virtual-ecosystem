@@ -3,7 +3,7 @@
 class Renderer {
 
   /**
-   * Return the table filled the objects(entities)
+   * Fill in the table with the all objects (entities)
    */
 
   static fillInField() {
@@ -18,7 +18,7 @@ class Renderer {
   }
 
   /**
-   * Return the table updated the objects after game round
+   * Update the table with objects after entity step
    */
 
   static updateTable(x, y, newCoords) {
@@ -32,4 +32,3 @@ class Renderer {
         : nextCell.textContent = " ";
   }
 }
-
