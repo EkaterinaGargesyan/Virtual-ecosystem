@@ -1,25 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Virtual ecosystem</title>
+  <meta charset="UTF-8">
+  <title>Virtual ecosystem</title>
 </head>
 <style>
-  table {
+  table.game-field {
     margin: 50px;
-    border: 1px solid black;
   }
 
-  td {
+  table.game-field td {
     width: 50px;
     height: 50px;
+    border: 1px solid black;
     text-align: center;
     font-size: 30px;
+  }
+
+  p {
+    position: absolute;
+    top: 240px;
+    left: 120px;
+    margin: 0;
+    padding: 50px;
+    background: white;
+    border: 1px solid black;
+    font-size: 70px;
+  }
+
+  .visible {
+    display: block;
+  }
+
+  .invisible {
+    display: none;
   }
 </style>
 
 <body>
-<table>
+
+<p class="start-game visible">Start game!</p>
+<table class="game-field">
   <tr>
     <td></td>
     <td></td>
@@ -141,9 +162,10 @@
     <td></td>
   </tr>
 </table>
+<p class="game-over invisible">Game over!</p>
 
 <script src="field.js"></script>
-<script src="entityConsts.js"></script>
+<script src="constants.js"></script>
 <script src="entities.js"></script>
 <script src="ecosystem.js"></script>
 <script src="renderer.js"></script>
@@ -153,12 +175,14 @@
   ecosystem.initGamefield(field);
 
   var intervalID = setInterval(() => {
-    ecosystem.gameRound();
-    if(Ecosystem.intervalTimer() === 0){
+    if(Ecosystem.intervalTime() > 0){
+      ecosystem.gameRound();
+    } else {
       clearInterval(intervalID);
+      Renderer.showGameOver();
+      console.log("Game over!");
     }
-  }, Ecosystem.intervalTimer());
-
+  }, Ecosystem.intervalTime());
 </script>
 </body>
 </html>

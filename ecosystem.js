@@ -4,6 +4,7 @@ class Ecosystem {
 
   /**
    * Initialization of the game field
+   * All symbols of the game field replacement for objects (instances of a class)
    */
 
   initGamefield(field){
@@ -30,7 +31,7 @@ class Ecosystem {
       })
     });
 
-    Renderer.fillInField();
+    Renderer.fillInTable();
   }
 
   /**
@@ -65,16 +66,17 @@ class Ecosystem {
     var curCell = field[curCoords[0]][curCoords[1]];
     var nextCell = field[newCoords[0]][newCoords[1]];
 
-    //if Herbivore is in current cell and next cell is empty or there is herb
-    if(curCell.code === ENTITY_CODE.HERBIVORE
-        && (!nextCell || nextCell.code === ENTITY_CODE.HERB)){
-      return true;
-
-      //if Carnivore is in current cell and next cell is empty or there is Herbivore
-    } else if(curCell.code === ENTITY_CODE.CARNIVORE
-        && (!nextCell || nextCell.code === (ENTITY_CODE.HERB || ENTITY_CODE.HERBIVORE))){
-      return true;
-    } else return false;
+    if(curCell){
+      //if Herbivore is in current cell and next cell is empty or there is herb
+      if(curCell.code === ENTITY_CODE.HERBIVORE
+          && (!nextCell || nextCell.code === ENTITY_CODE.HERB)){
+        return true;
+        //if Carnivore is in current cell and next cell is empty or there is Herbivore
+      } else if(curCell.code === ENTITY_CODE.CARNIVORE
+          && (!nextCell || nextCell.code === (ENTITY_CODE.HERB || ENTITY_CODE.HERBIVORE))){
+        return true;
+      } else return false;
+    }
   }
 
   /**
@@ -83,19 +85,19 @@ class Ecosystem {
 
   static getNewCoordinates(curCoords) {
     var coordsByDir = Ecosystem.getDirection();
-    var newCoords = curCoords.map((el, i) => {
+    var newCoords = curCoords.map((coord, i) => {
 
       //If element is near of field bound and new coordinates will be out of field bound, then invert new coordinates
       //If element isn't near of field bound, return new coordinate, that depend on direction (coordsByDirection)
-      if(el === 0){
-        el = (coordsByDir[i] < 0) ? (el - coordsByDir[i]) : (el + coordsByDir[i]);
-      } else if(el >= field.length-1){
-        el = (coordsByDir[i] > 0) ? (el - coordsByDir[i]) : (el + coordsByDir[i]);
+      if(coord === 0){
+        coord = (coordsByDir[i] < 0) ? (coord - coordsByDir[i]) : (coord + coordsByDir[i]);
+      } else if(coord >= field.length-1){
+        coord = (coordsByDir[i] > 0) ? (coord - coordsByDir[i]) : (coord + coordsByDir[i]);
       } else {
-        el += coordsByDir[i];
+        coord += coordsByDir[i];
       }
 
-      return el;
+      return coord;
     });
 
     if(Ecosystem.canDoTheStep(curCoords, newCoords)) {
@@ -109,7 +111,7 @@ class Ecosystem {
    * Return cell content by coordinates
    */
 
-  static lookAtCell(coords){
+  static whatInCell(coords){
     return field[coords[0]][coords[1]];
   }
 
@@ -160,7 +162,7 @@ class Ecosystem {
 
   static step(x, y, arrTookStep){
     var newCoords = Ecosystem.getNewCoordinates([x, y]);
-    field[x][y].takeTheStep(newCoords, Ecosystem.lookAtCell(newCoords));
+    field[x][y].takeTheStep(newCoords, Ecosystem.whatInCell(newCoords));
 
     field[newCoords[0]][newCoords[1]] = field[x][y];
     field[x][y] = null;
@@ -176,7 +178,7 @@ class Ecosystem {
    * Return time of passage of the game round
    */
 
-  static intervalTimer(){
+  static intervalTime(){
     var count = 0;
 
     field.forEach(function (row) {

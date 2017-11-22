@@ -7,7 +7,7 @@
 class Wall {
   constructor() {
     this.code = ENTITY_CODE.WALL;
-    this.symbol = SYMBOL_ON_FIELD.WALL;
+    this.symbol = ENTITY_SYMBOL.WALL;
   }
 }
 
@@ -18,7 +18,7 @@ class Wall {
 class Herb {
   constructor() {
     this.code = ENTITY_CODE.HERB;
-    this.symbol = SYMBOL_ON_FIELD.HERB;
+    this.symbol = ENTITY_SYMBOL.HERB;
     this.curEnergy = 3;
   }
 }
@@ -50,8 +50,8 @@ class LivingEntity {
     }
   }
 
-  takeTheStep(newCoords, whatIsNextCell){
-    if(!whatIsNextCell){
+  takeTheStep(newCoords, nextCellContent){
+    if(!nextCellContent){
       this.coords = newCoords;
     }
 
@@ -68,7 +68,7 @@ class Herbivore extends LivingEntity {
   constructor(x, y) {
     super(x, y);
     this.code = ENTITY_CODE.HERBIVORE;
-    this.symbol = SYMBOL_ON_FIELD.HERBIVORE;
+    this.symbol = ENTITY_SYMBOL.HERBIVORE;
     this.maxEnergy = 8;
     this.curEnergy = 6;
   }
@@ -94,7 +94,7 @@ class Carnivore extends LivingEntity {
   constructor(x, y){
     super(x, y);
     this.code = ENTITY_CODE.CARNIVORE;
-    this.symbol = SYMBOL_ON_FIELD.CARNIVORE;
+    this.symbol = ENTITY_SYMBOL.CARNIVORE;
     this.maxEnergy = 10;
     this.curEnergy = 8;
   }

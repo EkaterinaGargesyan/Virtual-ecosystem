@@ -7,7 +7,7 @@ const ENTITY_CODE = {
   CARNIVORE: 3
 };
 
-const SYMBOL_ON_FIELD = {
+const ENTITY_SYMBOL = {
   WALL: "#",
   HERB: "*",
   HERBIVORE: "o",
